@@ -53,36 +53,6 @@ def preprocess_image(image):
 
 
 
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     if 'file' not in request.files:
-#         return redirect(url_for('index'))
-    
-#     file = request.files['file']
-
-#     if file.filename == '':
-#         return redirect(url_for('index'))
-    
-#     if file and file.filename.lower().endswith(('png', 'jpg', 'jpeg')):
-#         # Load the image and preprocess it
-#         img = load_img(io.BytesIO(file.read()), target_size=(224, 224))
-#         img = preprocess_image(img)
-
-#         # Make prediction
-#         prediction = model.predict(img)
-#         predicted_label = data_labels[np.argmax(prediction, axis=1)[0]]
-#         probability = np.max(prediction)  # Get the highest probability
-
-#         # Render the result page with all necessary information
-#         return render_template('result.html', 
-#                                pred=predicted_label, 
-#                                prob=f"{probability:.2f}")
-    
-#     return redirect(url_for('index'))
-
-
-
-
 from werkzeug.utils import secure_filename
 
 @app.route('/predict', methods=['POST'])
