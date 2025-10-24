@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blood group prediction model</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-image: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.85) 50%, rgba(255, 255, 255, 0.9) 50%),
+        url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .logout-form {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .logout-btn {
+      background-color: #e53935;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .logout-btn:hover {
+      background-color: #e53935;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 900px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+      margin-top: 20px;
+    }
+
+    .upload-container, .info-container {
+      width: 48%;
+    }
+
+    .upload-container {
+      border-right: 2px solid #ddd;
+      padding: 20px;
+    }
+
+    .upload-container h2 {
+      font-size: 1.2rem;
+      color: #e53935;
+      margin-bottom: 15px;
+    }
+
+    .upload-container .empty-box {
+      border: 2px dashed #ddd;
+      height: 400px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #aaa;
+      font-size: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+
+    .upload-container img {
+      max-width: 100%;
+      max-height: 250px;
+      display: none;
+      border-radius: 10px;
+    }
+
+    .upload-btn:hover {
+      background-color: #45a049;
+    }
+
+    .info-container {
+      padding: 20px;
+    }
+
+    .info-container h2 {
+      font-size: 1rem;
+      color: #e53935;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .info-container p {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 2.5;
+
+    }
+
+    h3 {
+      font-size: 0.8rem;
+    }
+
+    .info-container-heading {
+      font-size: 0.5rem;
+    }
+
+    .info-container .fancy-list {
+      list-style: none;
+      padding-left: 0;
+      font-size: 0.9rem;
+      line-height: 2.5;
+    }
+
+    .info-container .fancy-list li {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .info-container .fancy-list li i {
+        margin-right: 10px;
+        font-size: 20px;
+        color: #e53935; /* red tone matching login/signup */
+        animation: bounce 1.5s infinite;
+    }
+    .h3_class{
+        font-size: 1rem;
+        color: #e53935;
+        margin-bottom: 1rem;
+    }
+
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .file-form .file-upload-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .file-input, .upload-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      width: 100%;
+      flex: 1;
+    }
+
+    .upload-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      display: inline-block;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-input:hover, .upload-btn:hover {
+      background-color: #45a049;
+      transition: background-color 0.3s ease;
+    }
+
+    .file-input::-webkit-file-upload-button {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logout Button -->
+  <form action="{{ url_for('logout') }}" method="post" class="logout-form">
+    <input type="submit" value="Logout" class="logout-btn">
+  </form>
+
+  <div class="container">
+    <!-- Upload Section -->
+    <div class="upload-container">
+      <h2>Upload Your Fingerprint Image</h2>
+      <div class="empty-box" id="image-box">
+        <span>No image uploaded yet.</span>
+      </div>
+      <form action="/predict" method="post" enctype="multipart/form-data" class="file-form">
+        <div class="file-upload-container">
+          <input class="file-input" type="file" name="file" accept="image/png, image/jpeg" required onchange="previewImage(event)">
+          <input class="upload-btn" type="submit" value="Upload and Predict">
+        </div>
+      </form>
+    </div>
+
+    <!-- Info Section -->
+    <div class="info-container">
+      <h2 class="info-container-heading">Welcome to the Blood Group Prediction System</h2>
+      <p class="info-container_info">
+        This intelligent system predicts a person’s blood group by analyzing their fingerprint image using advanced deep learning algorithms.
+      </p>
+
+      <h3 class="h3_class">How to Use the System</h3>
+      <p class="info-container_info">
+        Upload a clear, high-resolution image of your fingerprint (preferably thumb or index). The system will analyze the unique ridge patterns to predict your blood group.
+      </p>
+
+      <h3 class="h3_class">What You Should Expect</h3>
+      <ul class="fancy-list">
+        <li><i class="fas fa-stethoscope"></i> Predicted Blood Group Class (e.g., A+, B−, O+)</li>
+        <li><i class="fas fa-stethoscope"></i> Prediction Confidence (in % probability)</li>
+        <li><i class="fas fa-stethoscope"></i> Medical/Biological Name of the Predicted Group</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function previewImage(event) {
+      const reader = new FileReader();
+      const imageField = document.createElement('img');
+      const imageBox = document.getElementById('image-box');
+
+      reader.onload = function () {
+        if (reader.readyState === 2) {
+          imageField.src = reader.result;
+          imageField.style.display = 'block';
+          imageBox.innerHTML = '';
+          imageBox.appendChild(imageField);
+        }
+      }
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  </script>
+</body>
+</html>
